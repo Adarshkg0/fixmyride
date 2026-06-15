@@ -1,0 +1,1343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FixMyRide - Vehicle Repair Finder</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --ink: #1A2B23;
+  --orange: #FF6B35;
+  --cream: #FAF8F4;
+  --sage: #7C9885;
+  --clay: #E8DDD3;
+  --red: #C75450;
+  --text-muted: #6B7068;
+  --gold: #F5A623;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+
+body { background: var(--cream); color: var(--ink); }
+
+input, button, select { font-family: 'Inter', sans-serif; }
+
+.hidden { display: none !important; }
+
+/* ================= LOGIN ================= */
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background-image:
+    linear-gradient(rgba(26, 43, 35, 0.75), rgba(26, 43, 35, 0.85)),
+    url('https://images.unsplash.com/photo-1632823469850-1b7b1e8b7d4f?auto=format&fit=crop&w=1200&q=80');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.login-card {
+  background: rgba(250, 248, 244, 0.97);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.login-logo {
+  width: 56px;
+  height: 56px;
+  background: var(--orange);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin: 0 auto 1rem;
+  font-size: 24px;
+}
+
+.login-card h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+.login-sub { color: var(--text-muted); font-size: 14px; margin: 0.4rem 0 1.75rem; }
+
+.login-card label {
+  display: block;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1.5px solid var(--clay);
+  border-radius: 10px;
+  font-size: 16px;
+  margin-bottom: 1.25rem;
+  background: white;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.login-card input:focus { border-color: var(--orange); }
+
+.btn-primary {
+  width: 100%;
+  background: var(--orange);
+  color: white;
+  border: none;
+  padding: 0.9rem;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-link {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-top: 0.75rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.form-error {
+  color: var(--red);
+  font-size: 13px;
+  margin: -0.5rem 0 1rem;
+  text-align: left;
+}
+
+/* ================= APP SHELL ================= */
+.app-shell {
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--cream);
+  background-image:
+    linear-gradient(rgba(250, 248, 244, 0.94), rgba(250, 248, 244, 0.98)),
+    url('https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=1200&q=80');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  padding-bottom: 70px;
+  position: relative;
+}
+
+/* ---- Top nav (Amazon style) ---- */
+.top-nav {
+  color: var(--cream);
+  padding: 0.85rem 1.1rem;
+  background-image:
+    linear-gradient(rgba(26, 43, 35, 0.92), rgba(26, 43, 35, 0.95)),
+    url('https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1200&q=80');
+  background-size: cover;
+  background-position: center;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.top-nav > * {
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.nav-row1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.7rem;
+}
+
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
+
+.nav-icons { display: flex; gap: 8px; }
+
+.icon-btn {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: var(--cream);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  position: relative;
+}
+
+.badge-dot {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  background: var(--orange);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.location-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--clay);
+  margin-bottom: 0.7rem;
+}
+
+.location-row select {
+  background: none;
+  border: none;
+  color: var(--clay);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.location-row select option { color: var(--ink); }
+
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 0.75rem;
+  color: var(--clay);
+}
+
+.search-row input { flex: 1; background: none; border: none; color: white; font-size: 14px; outline: none; }
+.search-row input::placeholder { color: rgba(255,255,255,0.4); }
+
+/* ---- Category strip ---- */
+.category-strip {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.category-strip::-webkit-scrollbar { display: none; }
+
+.category-chip {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--clay);
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 0.55rem 0.9rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  min-width: 64px;
+  text-align: center;
+}
+
+.category-chip i { font-size: 18px; }
+
+.category-chip-active { background: var(--orange); border-color: var(--orange); color: white; }
+
+/* ---- Promo banner ---- */
+.promo-banner {
+  margin: 1rem auto 0;
+  max-width: 1400px;
+  width: calc(100% - 2.5rem);
+  background: linear-gradient(135deg, var(--orange), #ff8c5f);
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.promo-banner h3 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+.promo-banner p { font-size: 12px; opacity: 0.9; }
+.promo-banner i { font-size: 28px; opacity: 0.85; }
+
+/* ---- Sort / filter bar ---- */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem 0.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sort-select {
+  border: 1px solid var(--clay);
+  border-radius: 8px;
+  background: white;
+  font-size: 12.5px;
+  padding: 0.4rem 0.6rem;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+/* ---- Shop list ---- */
+.shop-list {
+  padding: 0.5rem 1.25rem 1.25rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+@media (min-width: 700px) {
+  .shop-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 1rem;
+  }
+}
+
+@media (min-width: 1100px) {
+  .shop-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1500px) {
+  .shop-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.shop-list .empty-state {
+  grid-column: 1 / -1;
+}
+
+.empty-state { color: var(--text-muted); font-size: 14px; text-align: center; padding: 2rem 0; }
+
+.shop-card {
+  background: rgba(255, 255, 255, 0.93);
+  border: 1px solid var(--clay);
+  border-radius: 16px;
+  padding: 1.1rem;
+  margin-bottom: 0.9rem;
+  backdrop-filter: blur(4px);
+  position: relative;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.shop-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.08); }
+
+.shop-closed { opacity: 0.75; }
+
+.fav-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: var(--clay);
+  cursor: pointer;
+  z-index: 2;
+}
+
+.fav-btn.active { color: var(--red); }
+
+.shop-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.7rem; padding-right: 1.5rem; }
+
+.shop-header h3 { font-size: 16px; font-weight: 600; margin-bottom: 0.3rem; }
+
+.shop-badges { display: flex; gap: 6px; margin-bottom: 0.4rem; flex-wrap: wrap; }
+
+.tag {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.tag-verified { background: rgba(31, 111, 235, 0.12); color: #1F6FEB; }
+.tag-fast { background: rgba(245, 166, 35, 0.15); color: var(--gold); }
+.tag-top { background: rgba(124, 152, 133, 0.18); color: var(--sage); }
+
+.shop-meta { display: flex; gap: 12px; font-size: 12.5px; color: var(--text-muted); flex-wrap: wrap; }
+.shop-meta span { display: flex; align-items: center; gap: 4px; }
+
+.rating-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--sage);
+  color: white;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 5px;
+}
+
+.status-badge { font-size: 11.5px; font-weight: 600; padding: 0.3rem 0.7rem; border-radius: 999px; white-space: nowrap; }
+.status-open { background: rgba(124, 152, 133, 0.18); color: var(--sage); }
+.status-closed { background: rgba(199, 84, 80, 0.12); color: var(--red); }
+
+.services-list {
+  border-top: 1px solid var(--clay);
+  border-bottom: 1px solid var(--clay);
+  padding: 0.65rem 0;
+  margin: 0.7rem 0 0.85rem;
+}
+
+.service-row { display: flex; justify-content: space-between; font-size: 13.5px; padding: 0.25rem 0; color: var(--ink); }
+.service-row span:first-child { color: var(--text-muted); }
+.service-price { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.card-actions { display: flex; gap: 8px; }
+
+.call-btn {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--orange);
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 0.75rem;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.pulse-ring {
+  position: absolute;
+  left: 14px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pulse-ring { display: block; animation: pulse 1.6s ease-out infinite; }
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.5); }
+  70% { box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+}
+
+.whatsapp-btn {
+  flex-shrink: 0;
+  width: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #25D366;
+  color: white;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.closed-notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--cream);
+  color: var(--text-muted);
+  font-size: 13.5px;
+  font-weight: 500;
+  padding: 0.75rem;
+  border-radius: 10px;
+}
+
+/* ---- Bottom nav (Amazon style) ---- */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-width: 100%;
+  background: rgba(250, 248, 244, 0.97);
+  border-top: 1px solid var(--clay);
+  display: flex;
+  justify-content: space-around;
+  padding: 0.6rem 0 0.5rem;
+  z-index: 30;
+  backdrop-filter: blur(6px);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.nav-item i { font-size: 18px; }
+.nav-item.active { color: var(--orange); }
+
+/* ---- Shop detail modal ---- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal-sheet {
+  background: var(--cream);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 1.25rem;
+}
+
+.modal-close {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.modal-close button {
+  background: var(--clay);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.modal-sheet h2 { font-size: 19px; font-weight: 700; margin-bottom: 0.3rem; }
+
+.modal-section { margin: 1rem 0; }
+.modal-section h4 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.review-item {
+  border-bottom: 1px solid var(--clay);
+  padding: 0.6rem 0;
+}
+
+.review-item:last-child { border-bottom: none; }
+
+.review-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 0.2rem; }
+.review-text { font-size: 13px; color: var(--text-muted); }
+
+/* ---- Toast ---- */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0.65rem 1.2rem;
+  border-radius: 999px;
+  z-index: 60;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  opacity: 0;
+  transition: opacity 0.25s;
+  pointer-events: none;
+}
+
+.toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN SCREEN ================= -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo"><i class="fa-solid fa-wrench"></i></div>
+    <h1>FixMyRide</h1>
+    <p class="login-sub">Roadside help, one call away</p>
+
+    <div id="registerNameField" class="hidden">
+      <label>Name</label>
+      <input type="text" id="nameInput" placeholder="Your name" />
+    </div>
+
+    <label>Mobile number</label>
+    <input type="tel" id="phoneInput" placeholder="98765 43210" maxlength="10" />
+
+    <label>Password</label>
+    <input type="password" id="passwordInput" placeholder="••••••••" />
+
+    <p class="form-error hidden" id="formError"></p>
+
+    <button class="btn-primary" id="submitBtn">Login</button>
+    <button class="btn-link" id="toggleModeBtn">New here? Create an account</button>
+  </div>
+</div>
+
+<!-- ================= MAIN APP ================= -->
+<div class="app-shell hidden" id="appShell">
+
+  <!-- Top nav -->
+  <div class="top-nav">
+    <div class="nav-row1">
+      <div class="brand"><i class="fa-solid fa-wrench"></i><span>FixMyRide</span></div>
+      <div class="nav-icons">
+        <button class="icon-btn" id="favBtn" title="Favorites">
+          <i class="fa-solid fa-heart"></i>
+          <span class="badge-dot hidden" id="favCount">0</span>
+        </button>
+        <button class="icon-btn" id="logoutBtn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+      </div>
+    </div>
+    <div class="location-row">
+      <i class="fa-solid fa-location-dot"></i>
+      <select id="locationSelect">
+        <option>Andheri West, Mumbai</option>
+        <option>Bandra, Mumbai</option>
+        <option>Powai, Mumbai</option>
+        <option>Thane West</option>
+        <option>Navi Mumbai</option>
+      </select>
+    </div>
+    <div class="search-row">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="Search puncture, towing, oil change..." />
+    </div>
+    <div class="category-strip" id="categoryStrip"></div>
+  </div>
+
+  <!-- Promo banner -->
+  <div class="promo-banner">
+    <div>
+      <h3>24x7 Emergency Towing</h3>
+      <p>Stuck on the highway? Tap to call nearest tow service</p>
+    </div>
+    <i class="fa-solid fa-truck-pickup"></i>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <span class="section-title" id="sectionTitle">Nearby mechanics</span>
+    <select class="sort-select" id="sortSelect">
+      <option value="distance">Sort: Nearest</option>
+      <option value="rating">Sort: Top rated</option>
+      <option value="open">Sort: Open first</option>
+    </select>
+  </div>
+
+  <!-- Shop list -->
+  <main class="shop-list" id="shopList"></main>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-tab="home"><i class="fa-solid fa-house"></i>Home</button>
+    <button class="nav-item" data-tab="favorites"><i class="fa-regular fa-heart"></i>Saved</button>
+    <button class="nav-item" data-tab="orders"><i class="fa-solid fa-receipt"></i>History</button>
+    <button class="nav-item" data-tab="account"><i class="fa-regular fa-user"></i>Account</button>
+  </nav>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ================= DATA =================
+const CATEGORIES = [
+  { id: "all", label: "All", icon: "fa-grip" },
+  { id: "puncture", label: "Puncture", icon: "fa-circle-dot" },
+  { id: "towing", label: "Towing", icon: "fa-truck-pickup" },
+  { id: "battery", label: "Battery", icon: "fa-car-battery" },
+  { id: "oil", label: "Oil change", icon: "fa-oil-can" },
+  { id: "tyre", label: "Tyre", icon: "fa-circle-notch" },
+  { id: "ac", label: "AC repair", icon: "fa-snowflake" },
+  { id: "wash", label: "Car wash", icon: "fa-soap" },
+];
+
+const SHOPS = [
+  {
+    id: 1,
+    name: "Sharma Auto Repair",
+    distanceKm: 0.8,
+    rating: 4.6,
+    reviewCount: 212,
+    open: true,
+    verified: true,
+    fastResponse: true,
+    address: "Shop 4, MG Road, Andheri West",
+    phone: "+91 98765 43210",
+    whatsapp: "919876543210",
+    services: [
+      { name: "Puncture repair", min: 100, max: 150, cat: "puncture" },
+      { name: "Oil change", min: 400, max: 600, cat: "oil" },
+      { name: "Brake pad replacement", min: 600, max: 1200, cat: "puncture" },
+    ],
+    reviews: [
+      { name: "Rohit K.", stars: 5, text: "Came within 15 mins, fixed the puncture quickly." },
+      { name: "Priya S.", stars: 4, text: "Fair pricing, good service." },
+    ],
+  },
+  {
+    id: 2,
+    name: "Speedy Bike Care",
+    distanceKm: 1.4,
+    rating: 4.3,
+    reviewCount: 158,
+    open: true,
+    verified: true,
+    fastResponse: true,
+    address: "Near Metro Station, Andheri West",
+    phone: "+91 99887 76655",
+    whatsapp: "919988776655",
+    services: [
+      { name: "Battery jumpstart", min: 200, max: 300, cat: "battery" },
+      { name: "Towing (per km)", min: 50, max: 50, cat: "towing" },
+      { name: "Chain & sprocket", min: 350, max: 900, cat: "puncture" },
+    ],
+    reviews: [
+      { name: "Amit V.", stars: 5, text: "Battery died at midnight, they reached fast." },
+      { name: "Neha T.", stars: 4, text: "Good for two-wheelers." },
+    ],
+  },
+  {
+    id: 3,
+    name: "City Tyre Works",
+    distanceKm: 2.1,
+    rating: 4.1,
+    reviewCount: 94,
+    open: false,
+    verified: true,
+    fastResponse: false,
+    opensAt: "9:00 AM",
+    address: "Link Road, Andheri East",
+    phone: "+91 90909 12345",
+    whatsapp: "919090912345",
+    services: [
+      { name: "Tyre replacement", min: 800, max: 2500, cat: "tyre" },
+      { name: "Wheel alignment", min: 300, max: 300, cat: "tyre" },
+    ],
+    reviews: [
+      { name: "Sanjay M.", stars: 4, text: "Good tyre brands available." },
+    ],
+  },
+  {
+    id: 4,
+    name: "Highway Rescue Garage",
+    distanceKm: 3.5,
+    rating: 4.8,
+    reviewCount: 340,
+    open: true,
+    verified: true,
+    fastResponse: true,
+    address: "Western Express Highway, near JVLR",
+    phone: "+91 91234 56789",
+    whatsapp: "919123456789",
+    services: [
+      { name: "Engine diagnostics", min: 500, max: 500, cat: "ac" },
+      { name: "Roadside towing", min: 800, max: 2000, cat: "towing" },
+      { name: "AC repair", min: 700, max: 3000, cat: "ac" },
+    ],
+    reviews: [
+      { name: "Karan D.", stars: 5, text: "Best for highway breakdowns, very professional." },
+      { name: "Megha R.", stars: 5, text: "AC repair done perfectly, reasonable cost." },
+    ],
+  },
+  {
+    id: 5,
+    name: "Patel Multi Brand Service",
+    distanceKm: 1.9,
+    rating: 4.5,
+    reviewCount: 276,
+    open: true,
+    verified: true,
+    fastResponse: false,
+    address: "SV Road, Andheri West",
+    phone: "+91 98123 45670",
+    whatsapp: "919812345670",
+    services: [
+      { name: "Full car service", min: 2500, max: 6000, cat: "oil" },
+      { name: "Oil change", min: 450, max: 700, cat: "oil" },
+      { name: "AC gas refill", min: 1500, max: 2500, cat: "ac" },
+    ],
+    reviews: [
+      { name: "Vikram J.", stars: 5, text: "Authorized multi-brand service, trustworthy." },
+    ],
+  },
+  {
+    id: 6,
+    name: "QuickFix Tyre & Battery Point",
+    distanceKm: 0.5,
+    rating: 4.2,
+    reviewCount: 130,
+    open: true,
+    verified: false,
+    fastResponse: true,
+    address: "Opp. Bus Depot, Andheri West",
+    phone: "+91 97654 32109",
+    whatsapp: "919765432109",
+    services: [
+      { name: "Battery replacement", min: 2500, max: 8000, cat: "battery" },
+      { name: "Tyre puncture", min: 80, max: 120, cat: "puncture" },
+      { name: "Nitrogen air fill", min: 50, max: 50, cat: "tyre" },
+    ],
+    reviews: [
+      { name: "Farhan A.", stars: 4, text: "Quick puncture fix, open very early." },
+    ],
+  },
+  {
+    id: 7,
+    name: "ShineCar Wash & Detailing",
+    distanceKm: 1.1,
+    rating: 4.7,
+    reviewCount: 410,
+    open: true,
+    verified: true,
+    fastResponse: false,
+    address: "Veera Desai Road, Andheri West",
+    phone: "+91 99001 22334",
+    whatsapp: "919900122334",
+    services: [
+      { name: "Basic car wash", min: 150, max: 300, cat: "wash" },
+      { name: "Full detailing", min: 1200, max: 3500, cat: "wash" },
+      { name: "Bike wash", min: 80, max: 150, cat: "wash" },
+    ],
+    reviews: [
+      { name: "Ritu B.", stars: 5, text: "Car looked brand new after detailing." },
+    ],
+  },
+  {
+    id: 8,
+    name: "Khan Auto Electricals",
+    distanceKm: 2.6,
+    rating: 4.0,
+    reviewCount: 76,
+    open: false,
+    verified: false,
+    fastResponse: false,
+    opensAt: "10:00 AM",
+    address: "Marol Naka, Andheri East",
+    phone: "+91 96543 21098",
+    whatsapp: "919654321098",
+    services: [
+      { name: "Wiring repair", min: 300, max: 1500, cat: "battery" },
+      { name: "Headlight fix", min: 200, max: 800, cat: "battery" },
+    ],
+    reviews: [
+      { name: "Suresh P.", stars: 4, text: "Fixed my headlight wiring same day." },
+    ],
+  },
+];
+
+// ================= STATE =================
+let currentCategory = "all";
+let currentQuery = "";
+let currentSort = "distance";
+let currentTab = "home";
+let isRegisterMode = false;
+let favorites = JSON.parse(localStorage.getItem("fixmyride_favorites") || "[]");
+
+// ================= HELPERS =================
+function formatPrice(s) {
+  return s.min === s.max ? `₹${s.min}` : `₹${s.min} - ₹${s.max}`;
+}
+
+function getUsers() {
+  return JSON.parse(localStorage.getItem("fixmyride_users") || "{}");
+}
+
+function saveUsers(users) {
+  localStorage.setItem("fixmyride_users", JSON.stringify(users));
+}
+
+function saveFavorites() {
+  localStorage.setItem("fixmyride_favorites", JSON.stringify(favorites));
+}
+
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 1800);
+}
+
+// ================= LOGIN LOGIC =================
+const loginScreen = document.getElementById("loginScreen");
+const appShell = document.getElementById("appShell");
+const formError = document.getElementById("formError");
+const phoneInput = document.getElementById("phoneInput");
+const passwordInput = document.getElementById("passwordInput");
+const nameInput = document.getElementById("nameInput");
+const registerNameField = document.getElementById("registerNameField");
+const submitBtn = document.getElementById("submitBtn");
+const toggleModeBtn = document.getElementById("toggleModeBtn");
+
+function showError(msg) {
+  formError.textContent = msg;
+  formError.classList.remove("hidden");
+}
+
+function clearError() {
+  formError.classList.add("hidden");
+}
+
+toggleModeBtn.addEventListener("click", () => {
+  isRegisterMode = !isRegisterMode;
+  clearError();
+  if (isRegisterMode) {
+    registerNameField.classList.remove("hidden");
+    submitBtn.textContent = "Create account";
+    toggleModeBtn.textContent = "Already have an account? Login";
+  } else {
+    registerNameField.classList.add("hidden");
+    submitBtn.textContent = "Login";
+    toggleModeBtn.textContent = "New here? Create an account";
+  }
+});
+
+submitBtn.addEventListener("click", () => {
+  clearError();
+  const phone = phoneInput.value.trim();
+  const password = passwordInput.value;
+
+  if (phone.length !== 10) return showError("Enter a valid 10-digit mobile number");
+  if (password.length < 4) return showError("Password must be at least 4 characters");
+
+  const users = getUsers();
+
+  if (isRegisterMode) {
+    if (users[phone]) return showError("An account with this number already exists");
+    users[phone] = { password, name: nameInput.value.trim() || "User" };
+    saveUsers(users);
+    localStorage.setItem("fixmyride_session", phone);
+    enterApp();
+  } else {
+    const user = users[phone];
+    if (!user || user.password !== password) return showError("Invalid phone or password");
+    localStorage.setItem("fixmyride_session", phone);
+    enterApp();
+  }
+});
+
+// ================= APP LOGIC =================
+function enterApp() {
+  loginScreen.classList.add("hidden");
+  appShell.classList.remove("hidden");
+  renderCategories();
+  renderShops();
+  updateFavCount();
+}
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  localStorage.removeItem("fixmyride_session");
+  appShell.classList.add("hidden");
+  loginScreen.classList.remove("hidden");
+  phoneInput.value = "";
+  passwordInput.value = "";
+});
+
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  currentQuery = e.target.value.toLowerCase();
+  renderShops();
+});
+
+document.getElementById("sortSelect").addEventListener("change", (e) => {
+  currentSort = e.target.value;
+  renderShops();
+});
+
+document.getElementById("locationSelect").addEventListener("change", (e) => {
+  showToast(`Location set to ${e.target.value}`);
+  renderShops();
+});
+
+document.getElementById("favBtn").addEventListener("click", () => {
+  currentTab = "favorites";
+  setActiveTab();
+  renderShops();
+});
+
+// Bottom nav
+document.querySelectorAll(".nav-item").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    currentTab = btn.dataset.tab;
+    setActiveTab();
+    if (currentTab === "home" || currentTab === "favorites") {
+      renderShops();
+    } else if (currentTab === "orders") {
+      renderHistory();
+    } else if (currentTab === "account") {
+      renderAccount();
+    }
+  });
+});
+
+function setActiveTab() {
+  document.querySelectorAll(".nav-item").forEach((b) => {
+    b.classList.toggle("active", b.dataset.tab === currentTab);
+  });
+}
+
+function renderCategories() {
+  const strip = document.getElementById("categoryStrip");
+  strip.innerHTML = "";
+  CATEGORIES.forEach((cat) => {
+    const chip = document.createElement("div");
+    chip.className = "category-chip" + (cat.id === currentCategory ? " category-chip-active" : "");
+    chip.innerHTML = `<i class="fa-solid ${cat.icon}"></i><span>${cat.label}</span>`;
+    chip.addEventListener("click", () => {
+      currentCategory = cat.id;
+      renderCategories();
+      renderShops();
+    });
+    strip.appendChild(chip);
+  });
+}
+
+function updateFavCount() {
+  const favCount = document.getElementById("favCount");
+  if (favorites.length > 0) {
+    favCount.textContent = favorites.length;
+    favCount.classList.remove("hidden");
+  } else {
+    favCount.classList.add("hidden");
+  }
+}
+
+function toggleFavorite(id) {
+  const idx = favorites.indexOf(id);
+  if (idx === -1) {
+    favorites.push(id);
+    showToast("Added to saved shops");
+  } else {
+    favorites.splice(idx, 1);
+    showToast("Removed from saved shops");
+  }
+  saveFavorites();
+  updateFavCount();
+  renderShops();
+}
+
+// ================= RENDER: SHOP LIST =================
+function getFilteredShops() {
+  let list = SHOPS.filter((shop) => {
+    const matchesQuery =
+      currentQuery === "" ||
+      shop.name.toLowerCase().includes(currentQuery) ||
+      shop.services.some((s) => s.name.toLowerCase().includes(currentQuery));
+
+    const matchesCategory =
+      currentCategory === "all" ||
+      shop.services.some((s) => s.cat === currentCategory);
+
+    const matchesTab = currentTab !== "favorites" || favorites.includes(shop.id);
+
+    return matchesQuery && matchesCategory && matchesTab;
+  });
+
+  if (currentSort === "distance") {
+    list = list.slice().sort((a, b) => a.distanceKm - b.distanceKm);
+  } else if (currentSort === "rating") {
+    list = list.slice().sort((a, b) => b.rating - a.rating);
+  } else if (currentSort === "open") {
+    list = list.slice().sort((a, b) => (b.open - a.open) || (a.distanceKm - b.distanceKm));
+  }
+
+  return list;
+}
+
+function renderShops() {
+  const filtered = getFilteredShops();
+  const sectionTitle = document.getElementById("sectionTitle");
+
+  if (currentTab === "favorites") {
+    sectionTitle.textContent = `Saved shops (${filtered.length})`;
+  } else {
+    sectionTitle.textContent = `Nearby mechanics (${filtered.length})`;
+  }
+
+  const shopList = document.getElementById("shopList");
+  shopList.innerHTML = "";
+
+  if (filtered.length === 0) {
+    const msg = currentTab === "favorites"
+      ? "No saved shops yet. Tap the heart icon on a shop to save it."
+      : "No shops match that search. Try a different term.";
+    shopList.innerHTML = `<p class="empty-state">${msg}</p>`;
+    return;
+  }
+
+  filtered.forEach((shop) => {
+    const card = document.createElement("div");
+    card.className = "shop-card" + (!shop.open ? " shop-closed" : "");
+
+    const badgesHtml = `
+      ${shop.verified ? '<span class="tag tag-verified">Verified</span>' : ""}
+      ${shop.fastResponse ? '<span class="tag tag-fast">Fast response</span>' : ""}
+      ${shop.rating >= 4.5 ? '<span class="tag tag-top">Top rated</span>' : ""}
+    `;
+
+    const servicesHtml = shop.services.slice(0, 3).map(s => `
+      <div class="service-row">
+        <span>${s.name}</span>
+        <span class="service-price">${formatPrice(s)}</span>
+      </div>
+    `).join("");
+
+    const isFav = favorites.includes(shop.id);
+
+    const actionsHtml = shop.open
+      ? `<div class="card-actions">
+           <a href="tel:${shop.phone.replace(/\s/g, "")}" class="call-btn" onclick="event.stopPropagation()">
+             <span class="pulse-ring"></span>
+             <i class="fa-solid fa-phone"></i>
+             Call now
+           </a>
+           <a href="https://wa.me/${shop.whatsapp}" target="_blank" class="whatsapp-btn" onclick="event.stopPropagation()" title="WhatsApp">
+             <i class="fa-brands fa-whatsapp"></i>
+           </a>
+         </div>`
+      : `<div class="closed-notice"><i class="fa-regular fa-clock"></i> Opens at ${shop.opensAt}</div>`;
+
+    card.innerHTML = `
+      <button class="fav-btn ${isFav ? "active" : ""}" data-fav="${shop.id}" title="Save shop">
+        <i class="fa-solid fa-heart"></i>
+      </button>
+      <div class="shop-header">
+        <div>
+          <h3>${shop.name}</h3>
+          <div class="shop-badges">${badgesHtml}</div>
+          <div class="shop-meta">
+            <span><i class="fa-solid fa-location-dot"></i> ${shop.distanceKm} km away</span>
+            <span class="rating-pill"><i class="fa-solid fa-star"></i> ${shop.rating}</span>
+            <span>(${shop.reviewCount} reviews)</span>
+          </div>
+        </div>
+        <span class="status-badge ${shop.open ? "status-open" : "status-closed"}">
+          ${shop.open ? "Open" : "Closed"}
+        </span>
+      </div>
+      <div class="services-list">${servicesHtml}</div>
+      ${actionsHtml}
+    `;
+
+    card.addEventListener("click", (e) => {
+      if (e.target.closest(".fav-btn")) return;
+      openShopDetail(shop.id);
+    });
+
+    card.querySelector(".fav-btn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite(shop.id);
+    });
+
+    shopList.appendChild(card);
+  });
+}
+
+// ================= SHOP DETAIL MODAL =================
+function openShopDetail(id) {
+  const shop = SHOPS.find((s) => s.id === id);
+  if (!shop) return;
+
+  const isFav = favorites.includes(shop.id);
+
+  const allServicesHtml = shop.services.map(s => `
+    <div class="service-row">
+      <span>${s.name}</span>
+      <span class="service-price">${formatPrice(s)}</span>
+    </div>
+  `).join("");
+
+  const reviewsHtml = shop.reviews.map(r => `
+    <div class="review-item">
+      <div class="review-header">
+        <span>${r.name}</span>
+        <span><i class="fa-solid fa-star" style="color: var(--gold);"></i> ${r.stars}</span>
+      </div>
+      <div class="review-text">${r.text}</div>
+    </div>
+  `).join("");
+
+  const actionHtml = shop.open
+    ? `<div class="card-actions" style="margin-top: 1rem;">
+         <a href="tel:${shop.phone.replace(/\s/g, "")}" class="call-btn">
+           <span class="pulse-ring"></span>
+           <i class="fa-solid fa-phone"></i>
+           Call ${shop.phone}
+         </a>
+         <a href="https://wa.me/${shop.whatsapp}" target="_blank" class="whatsapp-btn" title="WhatsApp">
+           <i class="fa-brands fa-whatsapp"></i>
+         </a>
+       </div>`
+    : `<div class="closed-notice" style="margin-top: 1rem;"><i class="fa-regular fa-clock"></i> Opens at ${shop.opensAt}</div>`;
+
+  const overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
+  overlay.innerHTML = `
+    <div class="modal-sheet">
+      <div class="modal-close"><button id="closeModal"><i class="fa-solid fa-xmark"></i></button></div>
+      <h2>${shop.name}</h2>
+      <div class="shop-meta" style="margin-bottom: 0.3rem;">
+        <span><i class="fa-solid fa-location-dot"></i> ${shop.address}</span>
+      </div>
+      <div class="shop-meta">
+        <span class="rating-pill"><i class="fa-solid fa-star"></i> ${shop.rating}</span>
+        <span>(${shop.reviewCount} reviews)</span>
+        <span class="status-badge ${shop.open ? "status-open" : "status-closed"}">${shop.open ? "Open now" : "Closed"}</span>
+      </div>
+
+      <div class="modal-section">
+        <h4>Services & rates</h4>
+        <div class="services-list">${allServicesHtml}</div>
+      </div>
+
+      <div class="modal-section">
+        <h4>Customer reviews</h4>
+        ${reviewsHtml}
+      </div>
+
+      ${actionHtml}
+
+      <button class="btn-primary" style="margin-top: 0.85rem; background: var(--ink);" id="modalSaveBtn">
+        <i class="fa-${isFav ? "solid" : "regular"} fa-heart"></i> ${isFav ? "Saved" : "Save shop"}
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  overlay.querySelector("#closeModal").addEventListener("click", () => overlay.remove());
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) overlay.remove();
+  });
+  overlay.querySelector("#modalSaveBtn").addEventListener("click", () => {
+    toggleFavorite(shop.id);
+    overlay.remove();
+  });
+}
+
+// ================= HISTORY TAB =================
+function renderHistory() {
+  document.getElementById("sectionTitle").textContent = "Call history";
+  const shopList = document.getElementById("shopList");
+  const history = JSON.parse(localStorage.getItem("fixmyride_history") || "[]");
+
+  if (history.length === 0) {
+    shopList.innerHTML = `<p class="empty-state">No calls made yet. When you call a shop, it'll show up here.</p>`;
+    return;
+  }
+
+  shopList.innerHTML = history.map(h => `
+    <div class="shop-card">
+      <div class="shop-header">
+        <div>
+          <h3>${h.name}</h3>
+          <div class="shop-meta"><span><i class="fa-regular fa-clock"></i> ${h.time}</span></div>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+// ================= ACCOUNT TAB =================
+function renderAccount() {
+  document.getElementById("sectionTitle").textContent = "Account";
+  const shopList = document.getElementById("shopList");
+  const session = localStorage.getItem("fixmyride_session");
+  const users = getUsers();
+  const user = users[session] || { name: "User" };
+
+  shopList.innerHTML = `
+    <div class="shop-card">
+      <div class="shop-header">
+        <div>
+          <h3>${user.name}</h3>
+          <div class="shop-meta"><span><i class="fa-solid fa-phone"></i> +91 ${session}</span></div>
+        </div>
+      </div>
+      <div class="services-list">
+        <div class="service-row"><span>Saved shops</span><span class="service-price">${favorites.length}</span></div>
+        <div class="service-row"><span>Account type</span><span class="service-price">Customer</span></div>
+      </div>
+      <button class="btn-primary" id="accountLogout" style="background: var(--red);">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+    </div>
+  `;
+
+  document.getElementById("accountLogout").addEventListener("click", () => {
+    document.getElementById("logoutBtn").click();
+  });
+}
+
+// ================= RESTORE SESSION =================
+window.addEventListener("DOMContentLoaded", () => {
+  const session = localStorage.getItem("fixmyride_session");
+  if (session) enterApp();
+});
+</script>
+
+</body>
+</html>
